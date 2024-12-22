@@ -1,0 +1,16 @@
+# syntax=docker/dockerfile:1
+
+# --- Builder Stage ---
+    FROM node:16 AS builder
+    WORKDIR /app
+    COPY package*.json ./
+    RUN npm install
+    COPY . .
+    
+    # --- Runner Stage ---
+    FROM node:16-slim
+    WORKDIR /app
+    COPY --from=builder /app .
+    
+    EXPOSE 3000
+    CMD ["node", "-r", "dotenv/config", "src/index.js"]

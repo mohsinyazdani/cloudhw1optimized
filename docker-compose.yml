@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14  # Using PostgreSQL 14
+    ports:
+      - "5432:5432"  # Expose port for local access (optional, for debugging)
+    environment:
+      POSTGRES_USER: postgres  # Default PostgreSQL user
+      POSTGRES_HOST_AUTH_METHOD : trust   # Empty password (for demonstration, consider security implications)
+      POSTGRES_DB: todo      # Database name
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: ./web # Assuming your Dockerfile for the web app is in the same directory
+    ports:
+      - "3000:3000"
+    environment:
+      PGHOST: db        # Connect to the 'db' service (PostgreSQL)
+      PGDATABASE: todo
+      PGUSER: postgres
+    depends_on:
+      - db
+
+volumes:
+  db_data:
